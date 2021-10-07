@@ -1,22 +1,22 @@
 from random import choice
 from simanneal import Annealer
 from copy import deepcopy
-import cost_function
+from groupMaking import cost_function
 
 # チーム作成用のクラスを定義する
 # 最適化を用いて、cost_function.pyで定義した値が最小となるようにチーム分けを行う
 class GroupingProblem(Annealer):
-    def __init__(self, init_state, member_list, sameTeam_list, womenLess_list):
+    def __init__(self, init_state, outputDF, sameTeam_list, womenLess_list):
         super(GroupingProblem, self).__init__(init_state)  # important!
-        self.member_list = member_list
+        self.outputDF = outputDF
         self.sameTeam_list = sameTeam_list
         self.womenLess_list = womenLess_list
         
     def move(self):
          
         # ランダムにa,bの２人選ぶ
-        a = choice(range(len(self.womenLess_list)))
-        b = choice(range(len(self.womenLess_list)))
+        a = choice(range(len(self.state[0])))
+        b = choice(range(len(self.state[0])))
         # 同一人物だった場合、何もせず終了(重複度の差分は0)
         if a == b:
             return 0
@@ -32,9 +32,9 @@ class GroupingProblem(Annealer):
         cost_b_before = cost_function.calc_team_cost(b_team, self.state[1], self.state[2], self.sameTeam_list, self.womenLess_list)
  
         # aのチームのaの性別の人数
-        self.state[1][a_team][self.member_list[a][2]] -= 1
+        self.state[1][a_team][self.outputDF["性別"].values[a]] -= 1
         # bのチームのbの性別の人数
-        self.state[1][b_team][self.member_list[b][2]] -= 1
+        self.state[1][b_team][self.outputDF["性別"].values[b]] -= 1
          
         # aのチームのリストからaを除く(効率悪いが横着)
         self.state[2][a_team].remove(a)
@@ -45,9 +45,9 @@ class GroupingProblem(Annealer):
         self.state[0][a], self.state[0][b] = self.state[0][b], self.state[0][a]
  
         # aの新しいチームのaの性別の人数
-        self.state[1][b_team][self.member_list[a][2]] += 1
+        self.state[1][b_team][self.outputDF["性別"].values[a]] += 1
         # bの新しいチームのbの性別の人数
-        self.state[1][a_team][self.member_list[b][2]] += 1
+        self.state[1][a_team][self.outputDF["性別"].values[b]] += 1
          
         # aの新しいチームのリストにaを追加
         self.state[2][b_team].append(a)
