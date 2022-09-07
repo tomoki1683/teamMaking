@@ -72,6 +72,7 @@ def inform(male_data, female_data, t_num, m_num):
 def make_outputDF(male_data, female_data, shortage):
     # 参加者ダミーを作成し、出力用DFを作成する
     # ダミーの作成方法は、元データの入り方によって変える
-    dammyDF = pd.DataFrame([["ダミー" + str(i+1), "ダミー" + str(i+1), "なし", "なし", "なし"] for i in range(shortage)], columns=male_data.columns)
+    # testData_all.csvが３列だったら、listの個数も3個になる
+    dammyDF = pd.DataFrame([["ダミー" + str(i+1), "なし", "なし"] for i in range(shortage)], columns=male_data.columns)
     outputDF = pd.concat([male_data, female_data, dammyDF]).reset_index(drop=True)
     return outputDF

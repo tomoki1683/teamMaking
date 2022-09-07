@@ -8,8 +8,8 @@ from copy import deepcopy
 
 # 取得するデータのパスを記載する
 # 適宜、書き換える
-main_path = "../../testData.csv"
-remove_path = "../../fix_zoom幹事リスト.csv"
+main_path = "../testData/testData_all.csv"
+remove_path = "../testData/testData_remove.csv"
 zoom_num = 2
 group_information = [
     # [team_num, teamMember_num, make_method]
@@ -73,7 +73,7 @@ for zoom_room in range(zoom_num):
             outputDF["チーム" + str(i+1)  + "回目"] = outputDF["チーム" + str(i+1)  + "回目"].apply(lambda c: chr(c+65))
         else:
             outputDF["チーム" + str(i+1)  + "回目"] = outputDF["チーム" + str(i+1)  + "回目"].apply(lambda n: n+1)
-    outputDF.to_csv(chr(zoom_room+65)+"会場チームリスト.csv")
+    outputDF.to_csv("../testResult/"+chr(zoom_room+65)+"会場チームリスト.csv")
     # チーム分けの個別結果をCSVで出力する
     for i in range(len(group_information)):
         # ピボットするために、["何人目"]列を追加する
@@ -81,7 +81,7 @@ for zoom_room in range(zoom_num):
         copy = deepcopy(outputDF.loc[:,["氏名", teamSTR]])
         copy["何人目"] = copy.groupby(teamSTR).cumcount() + 1
         #ピボットする
-        copy.pivot(index=teamSTR, columns="何人目", values="氏名").to_csv(chr(zoom_room+65)+"会場_"+teamSTR+"リスト.csv")
+        copy.pivot(index=teamSTR, columns="何人目", values="氏名").to_csv("../testResult/"+chr(zoom_room+65)+"会場_"+teamSTR+"リスト.csv")
 
 # 会場をCSVで出力する
 roomDF = pd.DataFrame()
@@ -89,4 +89,4 @@ for zoom_room in range(zoom_num):
     roomX = pd.concat([maleDataList[zoom_room].loc[:,["氏名"]], femaleDataList[zoom_room].loc[:,["氏名"]]])
     roomX["グループ"] = chr(zoom_room+65)
     roomDF = pd.concat([roomDF, roomX])
-roomDF.to_csv("会場リスト.csv")
+roomDF.to_csv("../testResult/会場リスト.csv")
